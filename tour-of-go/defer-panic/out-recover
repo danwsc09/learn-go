@@ -1,0 +1,8 @@
+Output:
+HI
+Funsies
+Will throw an error
+panic - 
+recover! "im panicking"
+defer in f
+finally done with main

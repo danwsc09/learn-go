@@ -1,0 +1,35 @@
+Output:
+Calling g
+printing in g 0
+printing in g 1
+printing in g 2
+printing in g 3
+print panicking
+defer in g 3
+defer in g 2
+defer in g 1
+defer in g 0
+Recovered in f, 4
+returned normally from f
+
+
+
+
+Stack (reverse)
+main()  - f()
+
+f()     - print g
+        - g()
+
+g(0)    - print i (0)
+        - defer print (with i = 0) after return
+
+g(1)    - print i (1)
+        - defer print (with i = 1) after return
+
+g(3)    - print i (3)
+        - defer print (with i = 3) after return
+
+g(4)    - print panicking
+        - panic(4)
+

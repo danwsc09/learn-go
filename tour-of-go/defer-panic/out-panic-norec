@@ -1,0 +1,12 @@
+Output:
+Calling g
+printing in g 0
+printing in g 1
+printing in g 2
+printing in g 3
+print panicking
+defer in g, 3
+defer in g, 2
+defer in g, 1
+defer in g, 0
+panic: 4
