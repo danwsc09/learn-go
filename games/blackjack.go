@@ -33,23 +33,47 @@ func main() {
 	for i := 0; i < 2; i++ {
 		hand = append(hand, deck.pop())
 	}
+	// TODO: game loop
+	/*
+		if min-handvalue < 21,
+			ask user input for Hit / Stay
+			if hit: deal card to user
+			if stay: exit user turn
+		if min-handvalue == 21
+			exit loop and user wins
+		if min-handvalue > 21
+			exit loop and user loses
+	*/
+	for calculateHand(hand) < 21 {
+		fmt.Println("Your turn: hit (h) or stay (s)?")
+		fmt.Scanln(&userInput)
+		if userInput[0] == 'h' {
+			hand = append(hand, deck.pop())
 
-	fmt.Println(deck)
-	fmt.Println("Hit (h) or stay (s)?")
-	fmt.Scanln(&userInput)
-	fmt.Println("You typed:", userInput)
+			continue
+		}
+		break
+
+	}
 }
 
 func generateShuffledDeck() []string {
 	var deck = []string{}
-	var swap string
-	var randInt int
 
 	for i := 0; i < len(SUITS); i++ {
 		for j := 0; j < len(NUMS); j++ {
 			deck = append(deck, SUITS[i]+NUMS[j])
 		}
 	}
+
+	deck = shuffleDeck(deck)
+
+	return deck
+}
+
+func shuffleDeck(deck []string) []string {
+	var swap string
+	var randInt int
 
 	rand.Seed(time.Now().UnixNano())
 
