@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,23 +14,32 @@ type UserType struct {
 	LastName  string `json:"last_name"`
 }
 
-// GetUsers responds with the list of all albums as JSON.
-func GetUsers(c *gin.Context) {
-	sqlStatement := `
-	SELECT * FROM users`
-	db := GetDbConnection()
-	defer db.Close()
-	res, err := db.Exec(sqlStatement)
-	if err != nil {
-		fmt.Println("Error:", err)
-		c.Status(500)
-	}
-	res.RowsAffected()
-	fmt.Println("res:", res)
-	c.IndentedJSON(http.StatusOK, res)
+var users []UserType = []UserType{
+	{Age: 10, Email: "tempaion1@hotmail.com", FirstName: "A1", LastName: "B1"},
+	{Age: 20, Email: "tempaion2@hotmail.com", FirstName: "A2", LastName: "B2"},
+	{Age: 30, Email: "tempaion3@hotmail.com", FirstName: "A3", LastName: "B3"},
+	{Age: 40, Email: "tempaion4@hotmail.com", FirstName: "A4", LastName: "B4"},
 }
 
-/*
+// GetUsers responds with the list of all albums as JSON.
+func GetUsers(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, users)
+	/*
+		sqlStatement := `
+		SELECT * FROM users`
+		db := GetDbConnection()
+		defer db.Close()
+		res, err := db.Exec(sqlStatement)
+		if err != nil {
+			fmt.Println("Error:", err)
+			c.Status(500)
+		}
+		res.RowsAffected()
+		fmt.Println("res:", res)
+		c.IndentedJSON(http.StatusOK, res)
+	*/
+}
+
 func PostUsers(c *gin.Context) {
 	var newUser UserType
 
@@ -39,16 +47,21 @@ func PostUsers(c *gin.Context) {
 	if err := c.BindJSON(&newUser); err != nil {
 		return
 	}
-	sqlStatement := `
-	INSERT INTO user (age, email, first_name, last_name)
-	VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
-	VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
+	users = append(users, newUser)
+	c.IndentedJSON(http.StatusCreated, newUser)
+	/*
+		sqlStatement := `
+		INSERT INTO user (age, email, first_name, last_name)
+		VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
+		// VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
 
-	// add the new album to the slice
-	albums = append(albums, newAlbum)
-	c.IndentedJSON(http.StatusCreated, newAlbum)
+		// add the new album to the slice
+		albums = append(albums, newAlbum)
+		c.IndentedJSON(http.StatusCreated, newAlbum)
+	*/
 }
 
+/*
 // GetAlbumByID locates the album whose ID value matches the id
 // parameter sent by the client, then returns that album as a response
 func GetAlbumByID(c *gin.Context) {
