@@ -1,8 +1,9 @@
+package main
+
 import (
 	"database/sql"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
@@ -13,13 +14,12 @@ const (
 	dbname = "testdb"
 )
 
-func main() {
-	router := gin.Default()
-
+func GetDbConnection() *sql.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("successfully connected", db)
+	return db
 }

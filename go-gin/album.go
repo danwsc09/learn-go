@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"net/http"
 
@@ -55,3 +56,4 @@ func GetAlbumByID(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 }
+*/

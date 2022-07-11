@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // user represents data about a record album.
-type user struct {
+type UserType struct {
 	Age       int    `json:"age"`
 	Email     string `json:"email"`
 	FirstName string `json:"first_name"`
@@ -17,19 +18,31 @@ type user struct {
 // GetUsers responds with the list of all albums as JSON.
 func GetUsers(c *gin.Context) {
 	sqlStatement := `
-	INSERT INTO user (age, email, first_name, last_name)
-	VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
-	_, err = db.Exec(sqlStatement)
-	c.IndentedJSON(http.StatusOK, albums)
+	SELECT * FROM users`
+	db := GetDbConnection()
+	defer db.Close()
+	res, err := db.Exec(sqlStatement)
+	if err != nil {
+		fmt.Println("Error:", err)
+		c.Status(500)
+	}
+	res.RowsAffected()
+	fmt.Println("res:", res)
+	c.IndentedJSON(http.StatusOK, res)
 }
 
+/*
 func PostUsers(c *gin.Context) {
-	var newAlbum album
+	var newUser UserType
 
 	// Call bindJSON to bind the received JSON to new Album
-	if err := c.BindJSON(&newAlbum); err != nil {
+	if err := c.BindJSON(&newUser); err != nil {
 		return
 	}
+	sqlStatement := `
+	INSERT INTO user (age, email, first_name, last_name)
+	VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
+	VALUES (30, 'wonsang@freed.com', 'Wonsang', 'Chong'`
 
 	// add the new album to the slice
 	albums = append(albums, newAlbum)
@@ -52,3 +65,4 @@ func GetAlbumByID(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 }
+*/
