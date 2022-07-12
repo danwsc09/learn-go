@@ -21,6 +21,12 @@ func main() {
 	router.Run("localhost:8080")
 }
 
+func CheckError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
