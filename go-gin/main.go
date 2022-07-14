@@ -17,6 +17,7 @@ func main() {
 	*/
 
 	router.GET("/users", GetUsers)
+	router.GET("/users/:minAge", GetUsersFilterByAge)
 	router.POST("/users", PostUsers)
 	router.Run("localhost:8080")
 }
