@@ -49,7 +49,6 @@ func main() {
 	fmt.Println("=================")
 	fmt.Println("successfully connected", db)
 	fmt.Println("=================")
-
 	albums, err := albumsByArtist("John Coltrane")
 	if err != nil {
 		log.Fatal(err)
@@ -82,6 +81,16 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Printf("Delete %d albums by %s\n", count, artist)
+
+	/*
+		fmt.Println("=================")
+		id := 4
+		regionName, err := regionNameOfAlbumByID(id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("album with id %d originates from %s\n", id, regionName)
+	*/
 }
 
 // albumsByArtist queries for albums that have the specified artist name.
@@ -168,3 +177,24 @@ func deleteAlbumByArtist(artist string) (int, error) {
 
 	return count, nil
 }
+
+/* With a nullable string column called "region"
+// regionNameOfAlbumByID returns the region name of a given album by ID
+func regionNameOfAlbumByID(id int) (string, error) {
+	var s sql.NullString
+	row := db.QueryRow("SELECT region FROM album WHERE id = $1", id)
+	err := row.Scan(&s)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("regionNameOfAlbumByID no album with id %d: %v", id, err)
+		}
+		return "", fmt.Errorf("regionNameOfAlbumByID %d: %v", id, err)
+	}
+
+	name := "Placeholder Region Name"
+	if s.Valid {
+		name = s.String
+	}
+	return name, nil
+}
+*/
