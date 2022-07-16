@@ -124,13 +124,32 @@ func albumsByArtist(name string) ([]Album, error) {
 func albumByID(id int64) (Album, error) {
 	var alb Album
 
-	row := db.QueryRow("SELECT * FROM album WHERE id = $1", id)
-	if err := row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
-		if err == sql.ErrNoRows {
-			return alb, fmt.Errorf("albumByID %d: no such album", id)
-		}
-		return alb, fmt.Errorf("albumByID %d: %v", id, err)
+	// with a prepared statement (sql.Stmt)
+	// Define a prepared statement. Typically, you'd define this statement
+	// elsewhere and save it for use in functions such as this one.
+	stmt, err := db.Prepare("SELECT * FROM album WHERE id = $1")
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	row := stmt.QueryRow(id)
+	err = row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return alb, fmt.Errorf("albumById - no albums with id %d: %v", id, err)
+		}
+		return alb, fmt.Errorf("albumById %d: %v", id, err)
+	}
+
+	/*
+		row := db.QueryRow("SELECT * FROM album WHERE id = $1", id)
+		if err := row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
+			if err == sql.ErrNoRows {
+				return alb, fmt.Errorf("albumByID %d: no such album", id)
+			}
+			return alb, fmt.Errorf("albumByID %d: %v", id, err)
+		}
+	*/
 	return alb, nil
 }
 
