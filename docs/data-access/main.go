@@ -15,6 +15,10 @@ type DbConfig struct {
 	USER     string
 }
 
+func (cfg DbConfig) getConnString() string {
+	return fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable", cfg.HOST, cfg.USER, cfg.DATABASE)
+}
+
 type Album struct {
 	ID     int64
 	Title  string
@@ -25,15 +29,17 @@ type Album struct {
 var db *sql.DB
 
 func main() {
-	config := DbConfig{HOST: "localhost", DATABASE: "testdb", USER: os.Getenv("DBUSER")}
-	var connectionString string = fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable", config.HOST, config.USER, config.DATABASE)
+	config := DbConfig{HOST: os.Getenv("DB_HOST"), DATABASE: os.Getenv("DB_NAME"), USER: os.Getenv("DB_USER")}
 	var err error
 
+	// connector, err := pq.NewConnector(config.getConnString())
 	// Get a database handle.
-	db, err = sql.Open("postgres", connectionString)
+	fmt.Println("opening connection...")
+	db, err = sql.Open("postgres", config.getConnString())
 	if err != nil {
 		log.Fatal(err)
 	}
+	// db = sql.OpenDB(connector)
 
 	pingErr := db.Ping()
 	if pingErr != nil {
@@ -68,6 +74,14 @@ func main() {
 	}
 
 	fmt.Printf("ID of added album: %v\n", albID)
+
+	fmt.Println("=================")
+	artist := "John Coltrane"
+	count, err := deleteAlbumByArtist(artist)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Delete %d albums by %s\n", count, artist)
 }
 
 // albumsByArtist queries for albums that have the specified artist name.
@@ -138,4 +152,19 @@ func addAlbum(alb Album) (int64, error) {
 		}
 		return id, nil
 	*/
+}
+
+// deleteAlbumByArtist deletes all albums of a given artist
+func deleteAlbumByArtist(artist string) (int, error) {
+	var count int
+	row := db.QueryRow(`WITH deleted AS (DELETE FROM album WHERE artist = $1 RETURNING *)
+	SELECT COUNT(*) from deleted;`, artist)
+	if err := row.Scan(&count); err != nil {
+		if err == sql.ErrNoRows {
+			return 0, fmt.Errorf("deleteByArtist %s: no such artist", artist)
+		}
+		return 0, fmt.Errorf("deleteAlbumByArtist %s: %v", artist, err)
+	}
+
+	return count, nil
 }
