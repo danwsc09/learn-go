@@ -19,3 +19,10 @@
   - `Encoder` already takes a io.Writer, so this writes right away
   - `Encoder.encode` doesn't use memory, so it is preferable
 
+## POST && PUT
+- Implement `FromJSON` for `Product` using `Decoder.decode()`
+- Implement `getNextID()` and `findProduct(id int)`
+- Used the [regexp package in the standard library](https://pkg.go.dev/regexp) to parse URL params (for PUT)
+  - Very tedious and potentially error prone
+- Declare an Error, `ErrProductNotFound` to be used in the controller
+
